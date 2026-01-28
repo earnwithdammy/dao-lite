@@ -1,0 +1,380 @@
+/* =========================
+   RESET & GLOBAL
+========================= */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+html, body {
+    margin: 0;
+    padding: 0;
+    background: #0b0b0f;
+    color: #eaeaf0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, sans-serif;
+}
+
+/* =========================
+   HEADER
+========================= */
+header {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: #0f1117;
+    border-bottom: 1px solid #1f2430;
+    padding: 14px 18px;
+    font-weight: 700;
+    font-size: 18px;
+    color: #14f195;
+}
+
+/* =========================
+   LAYOUT
+========================= */
+.container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 16px;
+}
+
+/* Page title */
+.page-title {
+    margin: 12px 0 18px;
+    font-size: 22px;
+}
+
+/* =========================
+   CARDS
+========================= */
+.card {
+    background: #11131a;
+    border: 1px solid #1f2430;
+    border-radius: 16px;
+    padding: 16px;
+    margin-bottom: 18px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+
+.card h3 {
+    margin-top: 0;
+    margin-bottom: 12px;
+}
+
+/* =========================
+   STATS
+========================= */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 12px;
+    margin-bottom: 18px;
+}
+
+.stat-card {
+    border-radius: 14px;
+    padding: 14px;
+    text-align: center;
+    background: #151824;
+    border: 1px solid #23283a;
+}
+
+.stat-card span {
+    font-size: 13px;
+    opacity: 0.85;
+}
+
+.stat-card strong {
+    display: block;
+    margin-top: 6px;
+    font-size: 22px;
+}
+
+.stat-card.pending   { color: #f0ad4e; }
+.stat-card.approved  { color: #5bc0de; }
+.stat-card.paid      { color: #14f195; }
+.stat-card.rejected  { color: #ff6b6b; }
+
+/* =========================
+   LISTS
+========================= */
+.list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.list-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid #1f2430;
+}
+
+.list-item:last-child {
+    border-bottom: none;
+}
+
+/* =========================
+   TABLES
+========================= */
+.table-wrap {
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 600px;
+}
+
+th, td {
+    padding: 10px 12px;
+    text-align: left;
+    border-bottom: 1px solid #1f2430;
+}
+
+th {
+    font-size: 13px;
+    color: #9aa4bf;
+}
+
+td {
+    font-size: 14px;
+}
+
+/* =========================
+   BADGES
+========================= */
+.badge {
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.badge.pending   { background: #f0ad4e; color: #000; }
+.badge.approved  { background: #5bc0de; color: #000; }
+.badge.paid      { background: #14f195; color: #000; }
+.badge.rejected  { background: #ff6b6b; color: #000; }
+
+/* =========================
+   TEXT & LINKS
+========================= */
+.muted {
+    color: #9aa4bf;
+    font-size: 14px;
+}
+
+.link {
+    color: #14f195;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.link:hover {
+    text-decoration: underline;
+}
+
+.mono {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+/* =========================
+   FORMS (GLOBAL)
+========================= */
+input,
+textarea,
+button {
+    width: 100%;
+    background: #0f1117;
+    border: 1px solid #1f2430;
+    color: #eaeaf0;
+    padding: 12px;
+    border-radius: 10px;
+    font-size: 14px;
+}
+
+input:focus,
+textarea:focus {
+    outline: none;
+    border-color: #14f195;
+}
+
+button {
+    background: linear-gradient(135deg, #9945ff, #14f195);
+    border: none;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+/* =========================
+   MOBILE TWEAKS
+========================= */
+@media (max-width: 480px) {
+    .page-title {
+        font-size: 20px;
+    }
+
+    header {
+        font-size: 16px;
+        padding: 12px 14px;
+    }
+
+    .container {
+        padding: 14px;
+    }
+}
+
+/* CHAT LAYOUT */
+.chat-wrapper {
+    display: flex;
+    flex-direction: column;
+    height: calc(100vh - 120px);
+}
+
+.chat-messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 12px;
+}
+
+.chat-bubble {
+    max-width: 75%;
+    padding: 10px 14px;
+    border-radius: 14px;
+    margin-bottom: 10px;
+    font-size: 14px;
+}
+
+.chat-bubble.me {
+    background: linear-gradient(135deg,#9945ff,#14f195);
+    color: #000;
+    margin-left: auto;
+}
+
+.chat-bubble.them {
+    background: #222;
+    color: #fff;
+}
+
+.chat-username {
+    font-size: 11px;
+    opacity: .7;
+}
+
+.chat-time {
+    font-size: 10px;
+    opacity: .5;
+    text-align: right;
+}
+
+.chat-input-bar {
+    position: sticky;
+    bottom: 0;
+    display: flex;
+    align-items: flex-end;
+    gap: 8px;
+    padding: 10px;
+    background: #0b0f1a;
+}
+
+/* =========================
+   CHAT INPUT FIX (OVERRIDE GLOBAL WIDTH)
+========================= */
+.chat-input-bar textarea {
+    width: auto;
+    flex: 1;
+}
+
+.chat-input-bar button {
+    width: auto;
+    min-width: 64px;
+    height: 44px;
+    padding: 0 16px;
+    flex-shrink: 0;
+}
+
+/* =========================
+   APP NAVIGATION (FINAL)
+========================= */
+.app-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+
+    height: 72px;
+    background: #0f1117;
+    border-top: 1px solid #1f2430;
+
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+
+    padding: 6px 0 env(safe-area-inset-bottom);
+    z-index: 100;
+}
+
+/* Nav item */
+.nav-item {
+    flex: 1;
+    text-align: center;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    gap: 4px;
+    font-size: 12px;
+    color: #9aa4bf;
+    text-decoration: none;
+}
+
+/* Icon */
+.nav-icon {
+    font-size: 22px;
+    line-height: 1;
+}
+
+/* Label */
+.nav-label {
+    font-size: 11px;
+}
+
+/* Active / hover */
+.nav-item.active,
+.nav-item:hover {
+    color: #14f195;
+}
+
+/* Center + button */
+.nav-main {
+    width: 60px;
+    height: 60px;
+
+    border-radius: 50%;
+    background: linear-gradient(135deg, #9945ff, #14f195);
+    color: #000;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 30px;
+    font-weight: 700;
+
+    position: relative;
+    top: -22px;
+
+    box-shadow: 0 12px 32px rgba(0,0,0,.45);
+}
+
+/* Prevent content hiding */
+body {
+    padding-bottom: 96px;
+}
