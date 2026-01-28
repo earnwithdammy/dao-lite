@@ -1,66 +1,74 @@
-# DAO-Lite
+# DAO-Lite 🟣🟢  
+Lightweight DAO tooling for community treasuries on Solana
 
-DAO-Lite is a lightweight, mobile-first DAO treasury and payout management tool
-built for small communities on Solana.
+## 🚀 What is DAO-Lite?
+DAO-Lite is a mobile-friendly, PHP-based community treasury and payout system
+designed for grassroots DAOs, collectives, and Web3 communities — especially
+in emerging markets.
 
-It focuses on **real governance flows**, not dashboards only.
+It allows communities to:
+- Create a DAO-style community
+- Manage a shared Solana treasury
+- Submit and approve payout requests
+- Verify on-chain transactions
+- Communicate in real-time via community chat
 
----
-
-## 🚀 Features
-
-- Community creation & membership
-- Role-based access (admin / member)
-- Treasury wallet per community
-- Payout requests with quorum approvals
-- On-chain Solana transaction verification
-- Alerts & notifications
-- Mobile-first UI
+No complex governance overhead. Just **practical DAO operations**.
 
 ---
 
-## 🧠 Why DAO-Lite?
+## 🧩 Why we built this
+Most DAO tools assume:
+- Desktop usage
+- Complex governance frameworks
+- Technical teams
 
-Most DAO tools are heavy, complex, and intimidating for small communities.
+DAO-Lite is built for:
+- Mobile-first users
+- Small to mid-size communities
+- Transparency without friction
+- Admin-verified on-chain payouts
 
-DAO-Lite is designed for:
-- Local DAOs
-- Student communities
-- Grant teams
-- Hackathon groups
-- Small on-chain organizations
-
-Simple governance. Real verification. No bloat.
+This makes it ideal for **African Web3 communities**, hack groups, open-source teams,
+and DAO experiments.
 
 ---
 
-## 🛠 Tech Stack
+## 🛠 Core Features
+- 🏘 Community creation & membership
+- 💬 Real-time community chat
+- 💸 Payout request & approval flow
+- 🔗 Solana transaction verification
+- 🔔 Alerts & notifications system
+- 📱 Mobile-first UI inspired by X (Twitter)
+- 🔐 Role-based admin controls
 
+---
+
+## 🔐 Tech Stack
 - PHP (PDO)
-- SQLite / MySQL
-- Solana RPC
-- Vanilla JavaScript
-- Mobile-first CSS
+- MySQL / SQLite
+- Solana RPC (transaction verification)
+- Vanilla JS (real-time polling)
+- Custom mobile-first CSS (Solana colors)
 
 ---
 
 ## 📸 Screenshots
-
-See `/screenshots` folder for UI previews.
-
----
-
-## 🧩 Status
-
-This is an active MVP with core functionality complete.
-Next steps include:
-- Realtime alerts
-- Activity logs
-- Public community views
-- Security hardening
+/screenshot 
 
 ---
 
-## 🧑‍💻 Author
+## 🧪 Status
+**MVP — actively improving**
 
-Built by an independent developer focused on practical DAO tooling.
+Upcoming:
+- WebSocket chat
+- Multisig treasury support
+- Push notifications
+- Wallet connect
+
+---
+
+## 🤝 Grants & Support
+Built as an open-source experiment to explore **practical DAO tooling on Solana**.
