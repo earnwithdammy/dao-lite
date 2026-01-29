@@ -9,7 +9,7 @@ if (session_status() !== PHP_SESSION_ACTIVE) {
 }
 
 /* ---------- REDIRECT ---------- */
-function redirect($url)
+function redirect(string $url): void
 {
     header("Location: $url");
     exit;
