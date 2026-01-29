@@ -18,8 +18,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $user = $stmt->fetch();
 
         if ($user && password_verify($password, $user['password_hash'])) {
+
+            // ✅ LOGIN SUCCESS (existing logic)
             $_SESSION['user_id'] = $user['id'];
+
+            // ✅ NEW: AUTO-JOIN IF INVITED
+            if (!empty($_SESSION['pending_invite'])) {
+                $code = $_SESSION['pending_invite'];
+                unset($_SESSION['pending_invite']);
+                redirect('/public/join_community.php?code=' . $code);
+            }
+
+            // ✅ DEFAULT BEHAVIOR (unchanged)
             redirect('/public/dashboard.php');
+
         } else {
             $error = 'Invalid username or password';
         }

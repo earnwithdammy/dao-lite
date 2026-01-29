@@ -59,12 +59,19 @@ $isAdmin = isCommunityAdmin($db, $community_id, $user_id);
         <code><?php echo e($community['treasury_wallet']); ?></code>
     </div>
 
+    <!-- ✅ ACTIONS (UPDATED) -->
     <div class="actions">
-        <a class="btn" href="/public/join_community.php?id=<?php echo $community_id; ?>">Join</a>
-        <a class="btn" href="/public/chat.php?community_id=<?php echo $community_id; ?>">Chat</a>
+
+        <?php if ($isAdmin): ?>
+            <a class="btn" href="/public/create_invite.php?community_id=<?php echo $community_id; ?>">
+                Create Invite Link
+            </a>
+        <?php endif; ?>
+
         <a class="btn primary" href="/public/create_payout_request.php?community_id=<?php echo $community_id; ?>">
             Request Payout
         </a>
+
     </div>
 
     <hr>
@@ -196,7 +203,8 @@ $approvalStmt = $db->prepare(
 
 </div>
 </main>
-<!-- ✅ BOTTOM NAV (INSIDE BODY, ROW LAYOUT) -->
+
+<!-- ✅ BOTTOM NAV -->
 <nav class="app-nav">
 
     <a href="/public/dashboard.php" class="nav-item">
@@ -213,7 +221,6 @@ $approvalStmt = $db->prepare(
         <span class="nav-icon">＋</span>
     </a>
 
-    <!-- 🔔 ALERTS -->
     <a href="/public/alerts.php" class="nav-item" style="position:relative;">
         <span class="nav-icon">🔔</span>
         <span class="nav-label">Alerts</span>

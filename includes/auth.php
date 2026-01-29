@@ -1,12 +1,14 @@
 <?php
 // includes/auth.php
 
-if (session_status() === PHP_SESSION_NONE) {
+// ---------------------------
+// SESSION
+// ---------------------------
+if (session_status() !== PHP_SESSION_ACTIVE) {
     session_start();
 }
 
 /* ---------- REDIRECT ---------- */
-
 function redirect($url)
 {
     header("Location: $url");
@@ -14,11 +16,15 @@ function redirect($url)
 }
 
 /* ---------- AUTH ---------- */
-
 function requireLogin()
 {
-    if (!isset($_SESSION['user_id'])) {
-        redirect('/public/login.php');
+    if (empty($_SESSION['user_id'])) {
+
+        // Save where the user was trying to go (optional but powerful)
+        $_SESSION['redirect_after_login'] = $_SERVER['REQUEST_URI'];
+
+        header('Location: /public/login.php');
+        exit;
     }
 }
 
@@ -27,40 +33,49 @@ function currentUserId()
     return $_SESSION['user_id'] ?? null;
 }
 
-/* ---------- COMMUNITY ROLES ---------- */
+// ---------------------------
+// COMMUNITY ROLES
+// ---------------------------
 
-function isCommunityAdmin($db, $community_id, $user_id)
+function isCommunityAdmin(PDO $db, int $community_id, int $user_id): bool
 {
     $stmt = $db->prepare(
-        "SELECT 1 FROM community_members
-         WHERE community_id = ? AND user_id = ? AND role = 'admin'"
+        "SELECT 1
+         FROM community_members
+         WHERE community_id = ? AND user_id = ? AND role = 'admin'
+         LIMIT 1"
     );
     $stmt->execute([$community_id, $user_id]);
     return (bool) $stmt->fetchColumn();
 }
 
-function adminCount($db, $community_id)
+function adminCount(PDO $db, int $community_id): int
 {
     $stmt = $db->prepare(
-        "SELECT COUNT(*) FROM community_members
+        "SELECT COUNT(*)
+         FROM community_members
          WHERE community_id = ? AND role = 'admin'"
     );
     $stmt->execute([$community_id]);
     return (int) $stmt->fetchColumn();
 }
 
-function approvalCount($db, $payout_request_id)
+function approvalCount(PDO $db, int $payout_request_id): int
 {
     $stmt = $db->prepare(
-        "SELECT COUNT(*) FROM approvals WHERE payout_request_id = ?"
+        "SELECT COUNT(*)
+         FROM approvals
+         WHERE payout_request_id = ?"
     );
     $stmt->execute([$payout_request_id]);
     return (int) $stmt->fetchColumn();
 }
 
-/* ---------- CSRF ---------- */
+// ---------------------------
+// CSRF PROTECTION
+// ---------------------------
 
-function csrfToken()
+function csrfToken(): string
 {
     if (empty($_SESSION['csrf'])) {
         $_SESSION['csrf'] = bin2hex(random_bytes(16));
@@ -68,14 +83,30 @@ function csrfToken()
     return $_SESSION['csrf'];
 }
 
-function verifyCsrf($token)
+function verifyCsrf(?string $token): bool
 {
-    return isset($_SESSION['csrf']) && hash_equals($_SESSION['csrf'], $token);
+    return isset($_SESSION['csrf'], $token)
+        && hash_equals($_SESSION['csrf'], $token);
 }
 
-/* ---------- ESCAPE ---------- */
+// ---------------------------
+// ESCAPING
+// ---------------------------
 
-function e($str)
+function e(?string $value): string
 {
-    return htmlspecialchars($str, ENT_QUOTES, 'UTF-8');
+    return htmlspecialchars($value ?? '', ENT_QUOTES, 'UTF-8');
+}
+
+// ---------------------------
+// DEV ADMIN (OPTIONAL)
+// ---------------------------
+
+/**
+ * Only you (dev/admin)
+ * Change ID if needed
+ */
+function isDevAdmin(): bool
+{
+    return currentUserId() === 1;
 }

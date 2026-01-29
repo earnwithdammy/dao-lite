@@ -20,7 +20,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             );
             $stmt->execute([$username, $hash]);
 
-            redirect('/public/login.php');
+            // ✅ AUTO-LOGIN AFTER REGISTER (no logic break)
+            $_SESSION['user_id'] = (int) $db->lastInsertId();
+
+            // ✅ AUTO-JOIN IF INVITED
+            if (!empty($_SESSION['pending_invite'])) {
+                $code = $_SESSION['pending_invite'];
+                unset($_SESSION['pending_invite']);
+                redirect('/public/join_community.php?code=' . $code);
+            }
+
+            // ✅ DEFAULT BEHAVIOR (unchanged intent)
+            redirect('/public/dashboard.php');
+
         } catch (PDOException $e) {
             $error = 'Username already exists';
         }
