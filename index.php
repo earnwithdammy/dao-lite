@@ -11,8 +11,18 @@
 </head>
 <body>
 
-<header>
-    DAO-Lite
+<header class="top-header">
+    <span class="brand">DAO-Lite</span>
+
+    <div class="header-menu">
+        <button class="menu-btn" aria-label="More">⋮</button>
+
+        <div class="menu-dropdown">
+            <a href="/public/about.php">About</a>
+            <a href="/public/terms.php">Terms</a>
+            <a href="/public/privacy.php">Privacy</a>
+        </div>
+    </div>
 </header>
 
 <main class="container">
@@ -168,25 +178,9 @@
     </a>
 
     <!-- 🔔 ALERTS -->
-    <a href="/public/alerts.php" class="nav-item" style="position:relative;">
+    <a href="/public/alerts.php" class="nav-item">
         <span class="nav-icon">🔔</span>
         <span class="nav-label">Alerts</span>
-
-        <?php if ($unreadAlerts > 0): ?>
-            <span style="
-                position:absolute;
-                top:6px;
-                right:22%;
-                background:#ff4d4d;
-                color:#fff;
-                font-size:10px;
-                padding:2px 6px;
-                border-radius:999px;
-                font-weight:700;
-            ">
-                <?php echo $unreadAlerts; ?>
-            </span>
-        <?php endif; ?>
     </a>
 
     <a href="/public/profile.php" class="nav-item">

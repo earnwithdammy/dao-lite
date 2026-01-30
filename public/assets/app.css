@@ -378,3 +378,98 @@ button {
 body {
     padding-bottom: 96px;
 }
+
+/* =========================
+   LEGAL PAGES
+========================= */
+.legal {
+    max-width: 800px;
+    margin: 0 auto;
+    line-height: 1.7;
+}
+
+.legal h2 {
+    margin-top: 24px;
+    font-size: 18px;
+}
+
+.legal ul {
+    padding-left: 18px;
+}
+
+.legal li {
+    margin-bottom: 6px;
+}
+
+/* =========================
+   HEADER DROPDOWN MENU
+========================= */
+.top-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+/* Brand */
+.brand {
+    font-weight: 700;
+    font-size: 18px;
+    color: #14f195;
+}
+
+/* Menu wrapper */
+.header-menu {
+    position: relative;
+}
+
+/* Button */
+.menu-btn {
+    background: none;
+    border: none;
+    color: #eaeaf0;
+    font-size: 22px;
+    cursor: pointer;
+    padding: 4px 8px;
+}
+
+/* Dropdown */
+.menu-dropdown {
+    position: absolute;
+    right: 0;
+    top: 36px;
+
+    background: #11131a;
+    border: 1px solid #1f2430;
+    border-radius: 12px;
+
+    min-width: 160px;
+    display: none;
+    flex-direction: column;
+
+    box-shadow: 0 12px 32px rgba(0,0,0,.45);
+    z-index: 50;
+}
+
+/* Links */
+.menu-dropdown a {
+    padding: 12px 14px;
+    color: #eaeaf0;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+.menu-dropdown a:hover {
+    background: #151824;
+    color: #14f195;
+}
+
+/* Show on hover (desktop) */
+.header-menu:hover .menu-dropdown {
+    display: flex;
+}
+
+/* Mobile tap-friendly */
+.menu-btn:focus + .menu-dropdown,
+.menu-dropdown:hover {
+    display: flex;
+}
