@@ -109,6 +109,48 @@ $members = $stmt->fetchAll();
 
 <hr>
 
+<h3>Join Requests</h3>
+
+<?php
+$stmt = $db->prepare(
+    "SELECT jr.id, u.username
+     FROM join_requests jr
+     JOIN users u ON u.id = jr.user_id
+     WHERE jr.community_id = ? AND jr.status = 'pending'
+     ORDER BY jr.created_at ASC"
+);
+$stmt->execute([$community_id]);
+$joinRequests = $stmt->fetchAll();
+?>
+
+<?php if (!$joinRequests): ?>
+    <p class="muted">No pending join requests.</p>
+<?php else: ?>
+<ul class="list">
+<?php foreach ($joinRequests as $jr): ?>
+    <li style="display:flex;justify-content:space-between;align-items:center;gap:12px;">
+        <strong><?php echo e($jr['username']); ?></strong>
+
+        <div class="action-row">
+            <form method="post" action="/public/approve_join.php">
+                <input type="hidden" name="request_id" value="<?php echo $jr['id']; ?>">
+                <input type="hidden" name="csrf" value="<?php echo csrfToken(); ?>">
+                <button class="btn small">Approve</button>
+            </form>
+
+            <form method="post" action="/public/reject_join.php">
+                <input type="hidden" name="request_id" value="<?php echo $jr['id']; ?>">
+                <input type="hidden" name="csrf" value="<?php echo csrfToken(); ?>">
+                <button class="btn small danger">Reject</button>
+            </form>
+        </div>
+    </li>
+<?php endforeach; ?>
+</ul>
+<?php endif; ?>
+
+<hr>
+
 <?php
 /* PAYOUT REQUESTS */
 $stmt = $db->prepare(

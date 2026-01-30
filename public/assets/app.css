@@ -473,3 +473,16 @@ body {
 .menu-dropdown:hover {
     display: flex;
 }
+
+u.action-row {
+    display: flex;
+    gap: 12px;
+}
+
+.action-row form {
+    flex: 1;
+}
+
+.action-row .btn {
+    width: 100%;
+}

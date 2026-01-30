@@ -4,14 +4,17 @@ require '../includes/auth.php';
 
 requireLogin();
 
+$user_id = currentUserId();
+
+/* UNREAD ALERT COUNT */
 $stmt = $db->prepare(
     "SELECT COUNT(*) FROM alerts
      WHERE user_id = ? AND is_read = 0"
 );
-$stmt->execute([currentUserId()]);
-$unreadAlerts = $stmt->fetchColumn();
+$stmt->execute([$user_id]);
+$unreadAlerts = (int) $stmt->fetchColumn();
 
-// Fetch all communities
+/* Fetch all communities */
 $stmt = $db->query(
     "SELECT c.*, 
         (SELECT COUNT(*) 
@@ -20,7 +23,6 @@ $stmt = $db->query(
      FROM communities c
      ORDER BY c.created_at DESC"
 );
-
 $communities = $stmt->fetchAll();
 ?>
 <!DOCTYPE html>
@@ -36,7 +38,6 @@ $communities = $stmt->fetchAll();
 <header>DAO-Lite</header>
 
 <div class="container">
-
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
         <h2 class="page-title">Communities</h2>
 
@@ -52,6 +53,12 @@ $communities = $stmt->fetchAll();
     <?php else: ?>
 
         <?php foreach ($communities as $c): ?>
+
+            <?php
+            $isMember = isCommunityMember($db, $c['id'], $user_id);
+            $isPending = hasPendingJoinRequest($db, $c['id'], $user_id);
+            ?>
+
             <div class="card">
 
                 <div style="display:flex;justify-content:space-between;align-items:start;gap:12px;">
@@ -75,6 +82,8 @@ $communities = $stmt->fetchAll();
                 </div>
 
                 <div style="display:flex;gap:10px;">
+
+                    <!-- OPEN -->
                     <a
                         href="/public/community.php?id=<?php echo $c['id']; ?>"
                         class="link"
@@ -83,13 +92,44 @@ $communities = $stmt->fetchAll();
                         Open
                     </a>
 
-                    <a
-                        href="/public/join_community.php?id=<?php echo $c['id']; ?>"
-                        class="link"
-                        style="flex:1;text-align:center;padding:10px;border-radius:10px;background:linear-gradient(135deg,#9945ff,#14f195);color:#000;font-weight:700;"
-                    >
-                        Join
-                    </a>
+                    <!-- JOIN STATE -->
+                    <?php if ($isMember): ?>
+
+                        <!-- Already a member: nothing -->
+
+                    <?php elseif ($isPending): ?>
+
+                        <span
+                            style="flex:1;text-align:center;padding:10px;
+                                   border-radius:10px;
+                                   background:#23283a;
+                                   color:#aaa;
+                                   font-weight:600;"
+                        >
+                            Pending
+                        </span>
+
+                    <?php else: ?>
+
+                        <form method="post" action="/public/request_join.php" style="flex:1;">
+                            <input type="hidden" name="community_id" value="<?php echo $c['id']; ?>">
+                            <input type="hidden" name="csrf" value="<?php echo csrfToken(); ?>">
+                            <button
+                                type="submit"
+                                style="width:100%;
+                                       padding:10px;
+                                       border-radius:10px;
+                                       background:linear-gradient(135deg,#9945ff,#14f195);
+                                       border:none;
+                                       color:#000;
+                                       font-weight:700;"
+                            >
+                                Request to Join
+                            </button>
+                        </form>
+
+                    <?php endif; ?>
+
                 </div>
 
             </div>
@@ -99,7 +139,7 @@ $communities = $stmt->fetchAll();
 
 </div>
 
-<!-- ✅ BOTTOM NAV (INSIDE BODY, ROW LAYOUT) -->
+<!-- ✅ BOTTOM NAV -->
 <nav class="app-nav">
 
     <a href="/public/dashboard.php" class="nav-item">
@@ -116,7 +156,6 @@ $communities = $stmt->fetchAll();
         <span class="nav-icon">＋</span>
     </a>
 
-    <!-- 🔔 ALERTS -->
     <a href="/public/alerts.php" class="nav-item" style="position:relative;">
         <span class="nav-icon">🔔</span>
         <span class="nav-label">Alerts</span>

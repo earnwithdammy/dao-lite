@@ -110,3 +110,23 @@ function isDevAdmin(): bool
 {
     return currentUserId() === 1;
 }
+
+function isCommunityMember($db, $community_id, $user_id) {
+    $stmt = $db->prepare(
+        "SELECT 1 FROM community_members 
+         WHERE community_id = ? AND user_id = ?"
+    );
+    $stmt->execute([$community_id, $user_id]);
+    return (bool) $stmt->fetchColumn();
+}
+
+function hasPendingJoinRequest($db, $community_id, $user_id) {
+    $stmt = $db->prepare(
+        "SELECT 1 FROM join_requests 
+         WHERE community_id = ? 
+           AND user_id = ? 
+           AND status = 'pending'"
+    );
+    $stmt->execute([$community_id, $user_id]);
+    return (bool) $stmt->fetchColumn();
+}
