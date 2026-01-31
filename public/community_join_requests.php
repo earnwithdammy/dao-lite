@@ -4,6 +4,14 @@ require '../includes/auth.php';
 
 requireLogin();
 
+/* UNREAD ALERT COUNT */
+$stmt = $db->prepare(
+    "SELECT COUNT(*) FROM alerts
+     WHERE user_id = ? AND is_read = 0"
+);
+$stmt->execute([currentUserId()]);
+$unreadAlerts = (int)$stmt->fetchColumn();
+
 $community_id = $_GET['id'] ?? null;
 if (!$community_id) die('Invalid community');
 
@@ -48,13 +56,27 @@ $joinRequests = $stmt->fetchAll();
 
 <ul class="list">
 <?php foreach ($joinRequests as $jr): ?>
-<li>
+<li style="display:flex; align-items:center; justify-content:space-between; gap:10px;">
+
     <strong><?php echo e($jr['username']); ?></strong>
-    <form method="post" action="/public/approve_join.php">
-        <input type="hidden" name="request_id" value="<?php echo $jr['id']; ?>">
-        <input type="hidden" name="csrf" value="<?php echo csrfToken(); ?>">
-        <button class="btn small">Approve</button>
-    </form>
+
+    <div style="display:flex; gap:6px;">
+
+        <!-- APPROVE -->
+        <form method="post" action="/public/approve_join.php">
+            <input type="hidden" name="request_id" value="<?php echo $jr['id']; ?>">
+            <input type="hidden" name="csrf" value="<?php echo csrfToken(); ?>">
+            <button class="btn small">Approve</button>
+        </form>
+
+        <!-- REJECT -->
+        <form method="post" action="/public/reject_join.php">
+            <input type="hidden" name="request_id" value="<?php echo $jr['id']; ?>">
+            <input type="hidden" name="csrf" value="<?php echo csrfToken(); ?>">
+            <button class="btn small danger">Reject</button>
+        </form>
+
+    </div>
 </li>
 <?php endforeach; ?>
 </ul>

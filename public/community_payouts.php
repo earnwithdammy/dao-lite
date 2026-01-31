@@ -37,16 +37,97 @@ $isAdmin = isCommunityAdmin($db, $community_id, $user_id);
     <link rel="stylesheet" href="/public/assets/app.css">
 
     <style>
+        .payout-card {
+            background: #141428;
+            border-radius: 12px;
+            padding: 12px;
+            margin-bottom: 12px;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.25);
+            font-size: 13px;
+        }
+
+        .payout-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 6px;
+        }
+
+        .payout-label {
+            font-size: 11px;
+            color: #a5a5ff;
+            font-weight: 600;
+        }
+
+        .wallet {
+            font-family: monospace;
+            font-size: 12px;
+            max-width: 160px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .copy-btn {
+            background: #2d2df0;
+            border: none;
+            border-radius: 6px;
+            padding: 4px 8px;
+            font-size: 11px;
+            color: #fff;
+            cursor: pointer;
+        }
+
+        /* ===== REASON EXPAND ===== */
+
+        .reason {
+            font-size: 12px;
+            color: #ddd;
+            max-height: 40px;
+            overflow: hidden;
+            transition: max-height 0.25s ease;
+        }
+
+        .reason.expanded {
+            max-height: 500px;
+        }
+
+        .reason-toggle {
+            font-size: 11px;
+            color: #7aa2ff;
+            cursor: pointer;
+            margin-top: 4px;
+            display: inline-block;
+        }
+
+        .payout-footer {
+            font-size: 11px;
+            color: #aaa;
+            margin-top: 6px;
+        }
+
         .action-row {
             display: flex;
-            gap: 12px;
+            gap: 8px;
             margin-top: 8px;
         }
-        .action-row form {
-            flex: 1;
-        }
+
         .action-row .btn {
             width: 100%;
+            font-size: 12px;
+            padding: 6px;
+        }
+
+        input.tx-input {
+            width: 100%;
+            margin-top: 6px;
+            padding: 6px;
+            font-size: 12px;
+            border-radius: 6px;
+            border: 1px solid #333;
+            background: #0f0f1f;
+            color: #fff;
         }
     </style>
 </head>
@@ -60,7 +141,6 @@ $isAdmin = isCommunityAdmin($db, $community_id, $user_id);
 <main role="application">
 <div class="container">
 
-<!-- TABS -->
 <div class="tabs">
     <a class="tab" href="/public/community.php?id=<?php echo $community_id; ?>">Overview</a>
     <a class="tab" href="/public/community_members.php?id=<?php echo $community_id; ?>">Members</a>
@@ -71,7 +151,6 @@ $isAdmin = isCommunityAdmin($db, $community_id, $user_id);
 </div>
 
 <?php
-/* PAYOUT REQUESTS */
 $stmt = $db->prepare(
     "SELECT pr.*, u.username
      FROM payout_requests pr
@@ -92,84 +171,73 @@ $approvalStmt = $db->prepare(
 
 <h3>Payout Requests</h3>
 
-<?php if (!$requests): ?>
-    <p>No payout requests yet.</p>
-<?php else: ?>
-
 <?php foreach ($requests as $r): ?>
 <?php
     $approvalStmt->execute([$r['id']]);
     $approvalCount = (int)$approvalStmt->fetchColumn();
 ?>
 
-<div class="card">
+<div class="payout-card">
 
-    <strong>Amount:</strong> <?php echo e($r['amount']); ?><br><br>
+    <div class="payout-row">
+        <div>
+            <div class="payout-label">Amount</div>
+            <strong><?php echo e($r['amount']); ?></strong>
+        </div>
 
-    <strong>Recipient Wallet</strong><br>
-    <code><?php echo e($r['recipient_wallet']); ?></code><br><br>
+        <span class="badge <?php echo $r['tx_verified'] ? 'paid' : e($r['status']); ?>">
+            <?php echo $r['tx_verified'] ? 'PAID' : strtoupper($r['status']); ?>
+        </span>
+    </div>
 
-    <strong>Reason</strong><br>
-    <?php echo e($r['reason']); ?><br><br>
+    <div class="payout-row">
+        <div>
+            <div class="payout-label">Wallet</div>
+            <div class="wallet"><?php echo e($r['recipient_wallet']); ?></div>
+        </div>
+        <button class="copy-btn" data-copy="<?php echo e($r['recipient_wallet']); ?>">Copy</button>
+    </div>
 
-    Requested by <strong><?php echo e($r['username']); ?></strong><br>
+    <div class="payout-label">Reason</div>
+    <div class="reason"><?php echo e($r['reason']); ?></div>
+    <span class="reason-toggle">Read more</span>
 
-    Status:
-    <span class="badge <?php echo $r['tx_verified'] ? 'paid' : e($r['status']); ?>">
-        <?php echo $r['tx_verified'] ? 'PAID' : strtoupper($r['status']); ?>
-    </span>
+    <div class="payout-footer">
+        Requested by <strong><?php echo e($r['username']); ?></strong><br>
+        Approvals: <?php echo $approvalCount; ?> / <?php echo $totalAdmins; ?> (Quorum <?php echo $quorum; ?>)
+    </div>
 
-    <br><br>
-
-    Approvals: <?php echo $approvalCount; ?> / <?php echo $totalAdmins; ?>
-    (Quorum <?php echo $quorum; ?>)
-
-    <br><br>
-
-    <!-- ADMIN ACTIONS -->
     <?php if ($isAdmin && $r['status'] === 'pending'): ?>
-        <form method="post" action="/public/approve_payout.php" class="inline">
+    <div class="action-row">
+
+        <!-- APPROVE -->
+        <form method="post" action="/public/approve_payout.php">
             <input type="hidden" name="request_id" value="<?php echo $r['id']; ?>">
             <input type="hidden" name="csrf" value="<?php echo csrfToken(); ?>">
             <button class="btn">Approve</button>
         </form>
-    <?php endif; ?>
+
+        <!-- REJECT -->
+        <form method="post" action="/public/reject_payout.php">
+            <input type="hidden" name="request_id" value="<?php echo $r['id']; ?>">
+            <input type="hidden" name="csrf" value="<?php echo csrfToken(); ?>">
+            <button class="btn danger">Reject</button>
+        </form>
+
+    </div>
+<?php endif; ?>
 
     <?php if ($isAdmin && $r['status'] === 'approved' && !$r['tx_verified']): ?>
         <form method="post" action="/public/submit_tx.php">
             <input type="hidden" name="request_id" value="<?php echo $r['id']; ?>">
             <input type="hidden" name="csrf" value="<?php echo csrfToken(); ?>">
-
-            <input
-                type="text"
-                name="tx_hash"
-                placeholder="Solana transaction hash"
-                required
-                style="width:100%; margin-top:8px;"
-            >
-
-            <button class="btn primary" style="margin-top:8px;">
-                Verify & Mark Paid
-            </button>
+            <input type="text" name="tx_hash" class="tx-input" placeholder="Solana transaction hash" required>
+            <button class="btn primary" style="margin-top:6px;">Verify & Mark Paid</button>
         </form>
     <?php endif; ?>
 
-    <?php if ($r['tx_verified']): ?>
-        <p style="margin-top:8px;">
-            🔗
-            <a
-                href="https://explorer.solana.com/tx/<?php echo e($r['tx_hash']); ?>"
-                target="_blank"
-            >
-                View Transaction
-            </a>
-        </p>
-    <?php endif; ?>
-
 </div>
-
 <?php endforeach; ?>
-<?php endif; ?>
 
 </div>
 </main>
@@ -218,6 +286,25 @@ $approvalStmt = $db->prepare(
     </a>
 
 </nav>
+
+<script>
+document.addEventListener('click', function (e) {
+
+    if (e.target.classList.contains('copy-btn')) {
+        navigator.clipboard.writeText(e.target.dataset.copy);
+        e.target.textContent = 'Copied';
+        setTimeout(() => e.target.textContent = 'Copy', 1200);
+    }
+
+    if (e.target.classList.contains('reason-toggle')) {
+        const reason = e.target.previousElementSibling;
+        reason.classList.toggle('expanded');
+        e.target.textContent = reason.classList.contains('expanded')
+            ? 'Show less'
+            : 'Read more';
+    }
+});
+</script>
 
 </body>
 </html>
