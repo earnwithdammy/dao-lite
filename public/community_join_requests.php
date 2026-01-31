@@ -4,75 +4,63 @@ require '../includes/auth.php';
 
 requireLogin();
 
-/* UNREAD ALERT COUNT */
-$stmt = $db->prepare(
-    "SELECT COUNT(*) FROM alerts
-     WHERE user_id = ? AND is_read = 0"
-);
-$stmt->execute([currentUserId()]);
-$unreadAlerts = (int)$stmt->fetchColumn();
-
 $community_id = $_GET['id'] ?? null;
 if (!$community_id) die('Invalid community');
 
-/* Fetch community */
+$isAdmin = isCommunityAdmin($db, $community_id, currentUserId());
+if (!$isAdmin) die('Access denied');
+
 $stmt = $db->prepare("SELECT * FROM communities WHERE id = ?");
 $stmt->execute([$community_id]);
 $community = $stmt->fetch();
-
-if (!$community) die('Community not found');
-
-$user_id = currentUserId();
-$isAdmin = isCommunityAdmin($db, $community_id, $user_id);
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <title><?php echo e($community['name']); ?> • DAO-Lite</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>Join Requests • <?php echo e($community['name']); ?></title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="/public/assets/app.css">
 </head>
 <body>
 
-<header class="app-header">
-    <?php echo e($community['name']); ?>
-</header>
+<header class="app-header"><?php echo e($community['name']); ?></header>
 
-<main role="application">
+<main>
 <div class="container">
 
-<!-- TABS -->
 <div class="tabs">
-    <a class="tab active" href="/public/community.php?id=<?php echo $community_id; ?>">Overview</a>
+    <a class="tab" href="/public/community.php?id=<?php echo $community_id; ?>">Overview</a>
     <a class="tab" href="/public/community_members.php?id=<?php echo $community_id; ?>">Members</a>
-    <?php if ($isAdmin): ?>
-        <a class="tab" href="/public/community_join_requests.php?id=<?php echo $community_id; ?>">Join Requests</a>
-        <a class="tab" href="/public/community_payouts.php?id=<?php echo $community_id; ?>">Payouts</a>
-    <?php endif; ?>
+    <a class="tab" href="/public/community_payouts.php?id=<?php echo $community_id; ?>">Payouts</a>
+    <a class="tab active">Join Requests</a>
 </div>
 
-<p><?php echo e($community['description']); ?></p>
+<?php
+$stmt = $db->prepare(
+    "SELECT jr.id, u.username
+     FROM join_requests jr
+     JOIN users u ON u.id = jr.user_id
+     WHERE jr.community_id = ? AND jr.status = 'pending'"
+);
+$stmt->execute([$community_id]);
+$joinRequests = $stmt->fetchAll();
+?>
 
-<div class="card">
-    <strong>Treasury Wallet</strong><br>
-    <code><?php echo e($community['treasury_wallet']); ?></code>
-</div>
-
-<div class="actions">
-    <?php if ($isAdmin): ?>
-        <a class="btn" href="/public/create_invite.php?community_id=<?php echo $community_id; ?>">
-            Create Invite Link
-        </a>
-    <?php endif; ?>
-
-    <a class="btn primary" href="/public/create_payout_request.php?community_id=<?php echo $community_id; ?>">
-        Request Payout
-    </a>
-</div>
+<ul class="list">
+<?php foreach ($joinRequests as $jr): ?>
+<li>
+    <strong><?php echo e($jr['username']); ?></strong>
+    <form method="post" action="/public/approve_join.php">
+        <input type="hidden" name="request_id" value="<?php echo $jr['id']; ?>">
+        <input type="hidden" name="csrf" value="<?php echo csrfToken(); ?>">
+        <button class="btn small">Approve</button>
+    </form>
+</li>
+<?php endforeach; ?>
+</ul>
 
 </div>
 </main>
-
 <!-- BOTTOM NAV -->
 <nav class="app-nav">
 

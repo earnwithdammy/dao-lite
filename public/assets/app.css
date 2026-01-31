@@ -486,3 +486,79 @@ u.action-row {
 .action-row .btn {
     width: 100%;
 }
+
+/* =========================
+   COMMUNITY TABS
+========================= */
+
+.tabs {
+    display: flex;
+    gap: 12px;
+    margin: 12px 0 18px;
+    padding-bottom: 6px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.tabs::-webkit-scrollbar {
+    display: none;
+}
+
+.tab {
+    flex-shrink: 0;
+    padding: 8px 14px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #b18cff;
+    text-decoration: none;
+    border-radius: 999px;
+    background: rgba(177, 140, 255, 0.08);
+    border: 1px solid rgba(177, 140, 255, 0.25);
+    transition: all 0.2s ease;
+}
+
+.tab:hover {
+    background: rgba(177, 140, 255, 0.18);
+}
+
+.tab.active {
+    color: #fff;
+    background: linear-gradient(135deg, #8f6bff, #44ffd2);
+    border-color: transparent;
+    box-shadow: 0 4px 14px rgba(143, 107, 255, 0.35);
+}
+
+/* =========================
+   COMMUNITY ACTION BUTTONS
+========================= */
+
+.actions {
+    display: flex;
+    gap: 12px;
+    margin: 16px 0 20px;
+}
+
+.actions .btn {
+    flex: 1;
+    text-align: center;
+}
+
+/* Secondary action */
+.actions .btn:not(.primary) {
+    background: rgba(255,255,255,0.06);
+    color: #cbbcff;
+    border: 1px solid rgba(203,188,255,0.25);
+}
+
+/* Primary action emphasis */
+.actions .btn.primary {
+    background: linear-gradient(135deg, #8f6bff, #44ffd2);
+    color: #fff;
+    border: none;
+    box-shadow: 0 6px 16px rgba(143, 107, 255, 0.35);
+}
+
+/* Mobile touch feedback */
+.actions .btn:active {
+    transform: scale(0.98);
+}
