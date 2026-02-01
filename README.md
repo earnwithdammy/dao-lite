@@ -68,7 +68,3 @@ Upcoming:
 - Push notifications
 - Wallet connect
 
----
-
-## 🤝 Grants & Support
-Built as an open-source experiment to explore **practical DAO tooling on Solana**.
